@@ -98,11 +98,11 @@ def get_aspect(lon1: float, lon2: float, orb: float = 8.0) -> Optional[Dict[str,
         diff = 360 - diff
 
     aspects = {
-        "اقتران": {"angle": 0.0, "type": "قوي/محايد", "meaning": "اندماج طاقي مكثف وتفعيل جذري لمسار الطاقة و'زناد' أساسي."},
-        "تسديس": {"angle": 60.0, "type": "إيجابي", "meaning": "فرص ومكتسبات مواتية تتطلب مبادرة لتنشيطها."},
-        "تربيع": {"angle": 90.0, "type": "تحدي/تنشيط", "meaning": "احتكاك، اختبارات قوية، ودفع حاسم باتجاه القرارات المصيرية المفصلية."},
-        "تثليث": {"angle": 120.0, "type": "حماية/تدفق", "meaning": "انسجام تام، تيسير، وتدفق سلس للنجاح والتوفيق."},
-        "مقابلة": {"angle": 180.0, "type": "مواجهة/استقطاب", "meaning": "تسليط الضوء على شراكات أو صراعات تتطلب توازناً وإدارة دقيقة."}
+        "اقتران": {"angle": 0.0, "type": "قوي/محايد", "meaning": "دمج الطاقات، تركيز شديد، قوة مكثفة قد تكون بناءة أو مربكة بناءً على طبيعة الكوكبين (0 درجة)"},
+        "تسديس": {"angle": 60.0, "type": "إيجابي", "meaning": "فرص داعمة، انسجام، تعاون، طاقة إيجابية تتطلب المبادرة لتفعيلها (60 درجة)"},
+        "تربيع": {"angle": 90.0, "type": "تحدي/تنشيط", "meaning": "تحديات، توتر، صراع داخلي يحفز على اتخاذ قرارات قوية والتطور (90 درجة)"},
+        "تثليث": {"angle": 120.0, "type": "حماية/تدفق", "meaning": "انسجام تام، مواهب فطرية، تدفق سلس للطاقة، حظ ووفرة دون جهد كبير (120 درجة)"},
+        "مقابلة": {"angle": 180.0, "type": "مواجهة/استقطاب", "meaning": "مواجهة، شد وجذب، حاجة ملحة لإيجاد التوازن، الوعي والتعلم من خلال الآخرين (180 درجة)"}
     }
 
     for name, data in aspects.items():
@@ -111,7 +111,88 @@ def get_aspect(lon1: float, lon2: float, orb: float = 8.0) -> Optional[Dict[str,
     return None
 
 # ==========================================
-# 2. الثوابت الفلكية الموسعة
+# 2. فئة التحليل الفلكي العام للشخصية (AstroAnalyzer)
+# ==========================================
+class AstroAnalyzer:
+    def __init__(self):
+        self.planets = {
+            "الشمس": "النشاط، الحيوية، الروح",
+            "القمر": "العواطف، العائلة، المنزل",
+            "عطارد": "الأخوة، المواصلات، الاتصالات",
+            "الزهرة": "العلاقات الاجتماعية، الغرام، النعمة",
+            "المريخ": "العمل، الحروب، الطاقة",
+            "المشتري": "النمو، التوسع، الإزدهار",
+            "زحل": "الرشود، المسؤولية، التراجع",
+            "أورانوس": "عدم الإستقرار، الغير مألوف، الثورات",
+            "نبتون": "ساتر الدخان، الضباب، اللصوص",
+            "بلوتو": "التغير الجذري، العمق، المافيا",
+        }
+
+        self.signs = {
+            "الحمل": "الطاقة، الحيوية، الإستقلال",
+            "الثور": "الصلابة، الإستمرارية، الثبات",
+            "الجوزاء": "الازدواجية، الفكر، التواصل",
+            "السرطان": "الحساسية، الحماية، العائلة",
+            "الأسد": "الفخامة، الإتقان، الملوك",
+            "العذراء": "الفعالية، الإنتقاد، التحليل",
+            "الميزان": "التوازن، العدالة، الدبلوماسية",
+            "العقرب": "الأسرار، العمق، الشهوانية",
+            "القوس": "النمو، التوسع، الإزدهار",
+            "الجدي": "الإنضباط، السلطة، الجديّة",
+            "الدلو": "اليوتوبيا، المثالية، الإبتكار",
+            "الحوت": "الحساسية، البديهية، الروحانية",
+        }
+
+        self.houses = {
+            "البيت الأول": "الطبع، المظهر، الصحة",
+            "البيت الثاني": "المال، النقد، الممتلكات",
+            "البيت الثالث": "الأخوة، الجيران، الرحلات القصيرة، الفكر",
+            "البيت الرابع": "العائلة، المنزل، الجزء الأخير من الحياة",
+            "البيت الخامس": "العلاقات الغرامية، الأولاد، الترفيه، الاستثمار",
+            "البيت السادس": "العمل اليومي، الصحة، أمراض قصيرة المدى، الحيوانات الأليفة",
+            "البيت السابع": "الزواج، الشراكات، مشاكل قانونية",
+            "البيت الثامن": "موت الشخص، موت الأقارب والاصدقاء، الديون، الضرائب، العمليات الجراحية",
+            "البيت التاسع": "السفر، الرحلات البعيدة، الدراسات العليا، المعتقد",
+            "البيت العاشر": "المهنة، السمعة، الرتبة في المجتمع",
+            "البيت الحادي عشر": "الأصدقاء، الداعمين، النوادي",
+            "البيت الثاني عشر": "الانعزال، المستشفيات، أمراض طويلة المدى، الروحانيات",
+        }
+
+        self.asteroids = {
+            "كايرون": "الجرح العميق الذي نحمله، وقدرتنا على التشافي وتقديم الحكمة الناتجة عن الألم للآخرين",
+            "سيريس": "مفهوم الرعاية والأمومة، كيفية تغذيتنا لأنفسنا وللآخرين، والإنتاجية",
+            "بالاس": "الحكمة، الاستراتيجية، الذكاء الإبداعي، وإدراك الأنماط لتحقيق العدالة",
+            "جونو": "الالتزام طويل الأمد، الزواج، الشراكات العميقة، ومفهوم الوفاء",
+            "فيستا": "التفاني، التركيز العميق، التضحية، والشعلة الروحية الداخلية للإنسان",
+        }
+
+        self.aspects = {
+            "الاقتران": "دمج الطاقات، تركيز شديد، قوة مكثفة قد تكون بناءة أو مربكة بناءً على طبيعة الكوكبين (0 درجة)",
+            "التسديس": "فرص داعمة، انسجام، تعاون، طاقة إيجابية تتطلب المبادرة لتفعيلها (60 درجة)",
+            "التربيع": "تحديات، توتر، صراع داخلي يحفز على اتخاذ قرارات قوية والتطور (90 درجة)",
+            "التثليث": "انسجام تام، مواهب فطرية، تدفق سلس للطاقة، حظ ووفرة دون جهد كبير (120 درجة)",
+            "المقابلة": "مواجهة، شد وجذب، حاجة ملحة لإيجاد التوازن، الوعي والتعلم من خلال الآخرين (180 درجة)",
+        }
+
+    def analyze_aspect_meaning(self, body1: str, body2: str, aspect_name: str, sign1: str, sign2: str, house1: int, house2: int) -> str:
+        b1_meaning = self.planets.get(body1, self.asteroids.get(body1, "دلالة جرم فلكي"))
+        b2_meaning = self.planets.get(body2, self.asteroids.get(body2, "دلالة جرم فلكي"))
+        asp_desc = self.aspects.get(aspect_name, "تفاعل فلكي")
+        s1_desc = self.signs.get(sign1, "طبيعة البرج")
+        s2_desc = self.signs.get(sign2, "طبيعة البرج")
+        h1_name = f"البيت {house1}"
+        h2_name = f"البيت {house2}"
+
+        return (
+            f"<b>الاتصال ({aspect_name}) بين ({body1}) و ({body2}):</b><br>"
+            f"• <b>طبيعة الاتصال:</b> {asp_desc}<br>"
+            f"• <b>دلالة ({body1}):</b> {b1_meaning} | في برج ({sign1}: {s1_desc}) - ({h1_name})<br>"
+            f"• <b>دلالة ({body2}):</b> {b2_meaning} | في برج ({sign2}: {s2_desc}) - ({h2_name})<br>"
+            f"• <b>التحليل النفسي والشخصي:</b> هذا الاتصال يربط بين طاقات الأجرام المذكورة ليشكل ملامح بارزة في شخصية صاحب الخريطة، دافعاً إياه للتعامل مع التحديات أو الفرص الناتجة عنه."
+        )
+
+# ==========================================
+# 3. الثوابت الفلكية الموسعة
 # ==========================================
 ZODIAC_SIGNS = [
     "الحمل", "الثور", "الجوزاء", "السرطان", "الأسد", "العذراء",
@@ -300,7 +381,7 @@ RULER_IN_HOUSE_MEANINGS = {
         9: "تألق ممتاز في الدراسات العليا، السفر الخارجي، والحكمة الفلسفية.",
         10: "الوصول إلى السمعة الطيبة والمناصب المرموقة عبر العلم، الفتوى، أو النشر.",
         11: "توسيع شبكة الأصدقاء على مستوى دولي، وتحقيق أهداف علمية وفكرية.",
-        12: "السفر الخارجي للاستجمام، الدراسات الباطنية، والتأمل بعيداً عن الضوضاء."
+        12: "السفر الخارجي بهدف الاستجمام الروحي، الدراسات الباطنية، والتأمل."
     },
     10: {
         1: "شخصية قيادية، حضور قوي، والنجاح المهني مرتهن بالمبادرة الشخصية.",
@@ -347,7 +428,7 @@ RULER_IN_HOUSE_MEANINGS = {
 }
 
 # ==========================================
-# 3. محرك التحليل الفلكي الطبي والنفسي المتطور
+# 4. محرك التحليل الفلكي الطبي والنفسي المتطور
 # ==========================================
 class MedicalAstroAnalyzer:
     def __init__(self):
@@ -445,7 +526,7 @@ class MedicalAstroAnalyzer:
             f"• <b>الأعضاء الجسدية:</b> {p_data.get('ext', '')} | {p_data.get('int', '')}.<br>"
             f"• <b>الاعتلالات المحتملة:</b> {p_data.get('diseases', '')}.<br>"
             f"• <b>المحفز النفسي السيكوسوماتي:</b> {p_data.get('psych', '')}.<br>"
-            f"• <b>التأثير في البرج:</b> {s_data.get('ext', '')} - {s_data.get('int', '')} (نفسياً: {s_data.get('psych', '')}).<br>"
+            f"• <b>تأثير البرج:</b> {s_data.get('ext', '')} - {s_data.get('int', '')} (نفسياً: {s_data.get('psych', '')}).<br>"
             f"• <b>تأثير البيت ({house_name}):</b> {h_data}{warning_tag}<br>"
         )
 
@@ -533,7 +614,7 @@ class MedicalAstroAnalyzer:
         return physical_status, psych_status, astro_advice, prevention_plan
 
 # ==========================================
-# 4. محرك التحليل النجمي والفلكي المتكامل
+# 5. محرك التحليل النجمي والفلكي المتكامل
 # ==========================================
 class StellarAstroEngine:
     def __init__(self, jd: float, lat: float, lng: float):
@@ -543,6 +624,7 @@ class StellarAstroEngine:
         self.planets_data = []
         self.fixed_stars_data = []
         self.aspects_data = []
+        self.general_aspects_data = []
         self.stellar_aspects = []
         self.ascendant_sign_idx = 0
         self.ascendant_deg = 0.0
@@ -626,6 +708,7 @@ class StellarAstroEngine:
                 pass
 
         # 4. حساب اتصالات الأجرام ببعضها (Inter-body Aspects)
+        astro_analyzer = AstroAnalyzer()
         for p1, p2 in itertools.combinations(self.planets_data, 2):
             asp = get_aspect(p1["lon"], p2["lon"], orb=8.0)
             if asp:
@@ -640,6 +723,21 @@ class StellarAstroEngine:
                     "type": asp["type"],
                     "meaning": asp["meaning"],
                     "orb": asp["orb"]
+                })
+                # إضافة الاتصالات العامة باستخدام فئة AstroAnalyzer
+                gen_meaning = astro_analyzer.analyze_aspect_meaning(
+                    p1["body"], p2["body"], asp["name"], p1["sign"], p2["sign"], p1["house"], p2["house"]
+                )
+                self.general_aspects_data.append({
+                    "body1": p1["body"],
+                    "body2": p2["body"],
+                    "sign1": p1["sign"],
+                    "sign2": p2["sign"],
+                    "house1": p1["house"],
+                    "house2": p2["house"],
+                    "aspect_name": asp["name"],
+                    "orb": asp["orb"],
+                    "analysis": gen_meaning
                 })
 
         # 5. حساب النجوم الثابتة
@@ -680,7 +778,6 @@ class StellarAstroEngine:
                 "meaning": fs_info["meaning"]
             })
 
-        # شبكة الاتصالات النجمية بأورب 8 درجات
         target_seven_planets = ["الشمس", "القمر", "عطارد", "الزهرة", "المريخ", "المشتري", "زحل"]
 
         for fs in self.fixed_stars_data:
@@ -856,7 +953,7 @@ class StellarAstroEngine:
 
             year_data = {"year": yr, "overall_status": f"{status_color} {overall_status}"}
 
-            # 1. بيت الصحة (1 و 6)
+            # 1. بيت الصحة
             health_status = "مستقر"
             health_text = "حالة عامة مستقرة للجسد والطاقة الحيوية."
             if 1 in [sat_h, ketu_h] or 6 in [sat_h, ketu_h]:
@@ -867,7 +964,7 @@ class StellarAstroEngine:
                 health_text = "طاقة حيوية عالية، تعافٍ سريع، وتحسن ملحوظ في الصحة."
             year_data["health"] = {"status": health_status, "desc": health_text}
 
-            # 2. بيت المال (2)
+            # 2. بيت المال
             money_status = "مستقر"
             money_text = "ثبات نسبي في الموارد وتوازن بين الدخل والإنفاق."
             if 2 in [sat_h, ketu_h]:
@@ -878,7 +975,7 @@ class StellarAstroEngine:
                 money_text = "وفرة مالية، فرص ربح مفاجئة أو توسع في مصادر الدخل."
             year_data["money"] = {"status": money_status, "desc": money_text}
 
-            # 3. بيت العائلة (4)
+            # 3. بيت العائلة
             fam_status = "مستقر"
             fam_text = "استقرار هادئ في الأجواء الأسرية والجذور."
             if 4 in [sat_h, ketu_h]:
@@ -889,7 +986,7 @@ class StellarAstroEngine:
                 fam_text = "أجواء عائلية مبهجة، استقرار منزلي أو توسع عقاري مفرح."
             year_data["family"] = {"status": fam_status, "desc": fam_text}
 
-            # 4. بيت العلاقات والغرام (5)
+            # 4. بيت العلاقات
             rom_status = "مستقر"
             rom_text = "هدوء في الجانب العاطفي وتوازن في الهوايات والمشاريع."
             if 5 in [sat_h, ketu_h]:
@@ -900,7 +997,7 @@ class StellarAstroEngine:
                 rom_text = "رومانسية عالية، إبداع متوهج، وحظوظ وافرة."
             year_data["romance"] = {"status": rom_status, "desc": rom_text}
 
-            # 5. بيت الزواج والشراكات (7)
+            # 5. بيت الزواج
             marr_status = "مستقر"
             marr_text = "علاقات قائمة على التفاهم والهدوء المتبادل."
             if 7 in [sat_h, ketu_h]:
@@ -911,7 +1008,7 @@ class StellarAstroEngine:
                 marr_text = "ارتباط سعيد، زواج، أو توقيع شراكات عمل ناجحة للغاية."
             year_data["marriage"] = {"status": marr_status, "desc": marr_text}
 
-            # 6. بيت السفر والعلوم (9)
+            # 6. بيت السفر
             trav_status = "مستقر"
             trav_text = "مسار فكري هادئ واهتمام بالدراسة المعتادة."
             if 9 in [sat_h, ketu_h]:
@@ -922,7 +1019,7 @@ class StellarAstroEngine:
                 trav_text = "سفر ناجح لبلاد الغربة، وتوسع فكري وعلمي واعد."
             year_data["travel"] = {"status": trav_status, "desc": trav_text}
 
-            # 7. بيت العمل والمهنة (10)
+            # 7. بيت العمل
             work_status = "مستقر"
             work_text = "استقرار وثبات وظيفي ضمن الروتين المعتاد."
             if 10 in [sat_h, ketu_h]:
@@ -965,11 +1062,11 @@ class StellarAstroEngine:
         return forecasts
 
 # ==========================================
-# 5. واجهة تطبيق Streamlit والحسابات
+# 6. واجهة تطبيق Streamlit والحسابات
 # ==========================================
 st.set_page_config(page_title="نظام التحليل النجمي", layout="wide")
 
-st.title("🌌 نظام تحليل الخريطة الميلادية (نجوم ثابتة - طبي - نفسي - قوى البيوت و تحليل طاقتها - توقعات لـ 5 سنوات)")
+st.title("🌌 نظام تحليل الخريطة الميلادية (اتصالات كلاسيكية عامة - نجوم ثابتة - طبي - نفسي - قوى البيوت - توقعات لـ 5 سنوات)")
 st.write("برنامج فلكي شامل لتحليل الميلادية وفق التنجيم الغربي الحديث - تطوير و برمجة الفلكي الدكتور ملهم أحمد")
 
 st.markdown("---")
@@ -1027,8 +1124,30 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
         ])
         st.dataframe(df_planets, width='stretch')
 
-        # ---------------- Section 2: Medical & Psychological Analysis ----------------
-        st.subheader("🏥 2. التحليل الفلكي الطبي والسيكوسوماتي والنفسي")
+        # ---------------- Section 2: General Astrological Aspects Analysis ----------------
+        st.subheader("🔗 2. تحليل الاتصالات الفلكية العامة (تربيع، تسديس، مقابلة، اقتران، تثليث) لشخصية صاحب الخريطة")
+        if engine.general_aspects_data:
+            df_gen_asp = pd.DataFrame([
+                {
+                    "الجرم الأول": ga["body1"],
+                    "الجرم الثاني": ga["body2"],
+                    "نوع الاتصال": ga["aspect_name"],
+                    "الفرق (Orb)": f"{ga['orb']:.2f}°",
+                    "موقع الجرم 1": f"البيت {ga['house1']} ({ga['sign1']})",
+                    "موقع الجرم 2": f"البيت {ga['house2']} ({ga['sign2']})"
+                } for ga in engine.general_aspects_data
+            ])
+            st.dataframe(df_gen_asp, width='stretch')
+
+            with st.expander("🔍 التفاصيل السيكولوجية والشخصية للاتصالات الفلكية العامة", expanded=False):
+                for ga in engine.general_aspects_data:
+                    st.markdown(ga["analysis"], unsafe_allow_html=True)
+                    st.markdown("---")
+        else:
+            st.info("لا توجد اتصالات فلكية ضمن نطاق الأورب المخصص.")
+
+        # ---------------- Section 3: Medical & Psychological Analysis ----------------
+        st.subheader("🏥 3. التحليل الفلكي الطبي والسيكوسوماتي والنفسي")
 
         p_phys, p_psych, p_adv, p_prev = med_analyzer.generate_medical_summary(
             engine.planets_data, stelliums, engine.aspects_data
@@ -1061,23 +1180,8 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
                 st.markdown(analysis_txt, unsafe_allow_html=True)
                 st.markdown("---")
 
-        with st.expander("🔗 تحليل الاتصالات والتفاعلات الفسيولوجية والتوترية بين الأجرام", expanded=False):
-            if engine.aspects_data:
-                for asp_item in engine.aspects_data:
-                    asp_analysis = med_analyzer.analyze_aspect(
-                        asp_item["body1"], asp_item["body2"],
-                        asp_item["aspect_name"],
-                        house1=asp_item["house1"], house2=asp_item["house2"],
-                        is_body1_asteroid=asp_item["is_asteroid1"],
-                        is_body2_asteroid=asp_item["is_asteroid2"]
-                    )
-                    st.markdown(asp_analysis, unsafe_allow_html=True)
-                    st.markdown("---")
-            else:
-                st.info("لا توجد اتصالات فسيولوجية رئيسية ضمن نطاق الأورب المخصص.")
-
-        # ---------------- Section 3: Stellar Aspects ----------------
-        st.subheader("✨ 3. شبكة الاتصالات النجمية مع الكواكب والأوتاد (بأورب 8°)")
+        # ---------------- Section 4: Stellar Aspects ----------------
+        st.subheader("✨ 4. شبكة الاتصالات النجمية مع الكواكب والأوتاد (بأورب 8°)")
         if engine.stellar_aspects:
             df_stellar = pd.DataFrame([
                 {
@@ -1093,8 +1197,8 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
         else:
             st.info("لا توجد اتصالات ضمن نطاق الأورب المخصص (8 درجات) مع الكواكب أو الأوتاد.")
 
-        # ---------------- Section 4: House Rulers Analysis ----------------
-        st.subheader("🏛️ 4. تحليل قوة حكام البيوت ومسارات الموارد والتقسيم الزمني")
+        # ---------------- Section 5: House Rulers Analysis ----------------
+        st.subheader("🏛️ 5. تحليل قوة حكام البيوت ومسارات الموارد والتقسيم الزمني")
         df_rulers = pd.DataFrame([
             {
                 "البيت": f"البيت {r['house_num']}",
@@ -1115,8 +1219,8 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
                 st.markdown(f"• <b>تقييم القوة والوضع الفلكي:</b> {r['status']} (النقاط: {r['score']})", unsafe_allow_html=True)
                 st.markdown(f"• <b>الأسباب والكرامات:</b> {' | '.join(r['reasons'])}", unsafe_allow_html=True)
 
-        # ---------------- Section 5: 5-Year Forecast ----------------
-        st.subheader("🔮 5. التوقعات السنوية المتقدمة (5 سنوات للأمام)")
+        # ---------------- Section 6: 5-Year Forecast ----------------
+        st.subheader("🔮 6. التوقعات السنوية المتقدمة (5 سنوات للأمام)")
         for f in forecast_report:
             with st.expander(f"📅 عام {f['year']} | النتيجة العامة: {f['overall_status']}"):
                 st.write(f"### النتيجة العامة للسنة: {f['overall_status']}")
@@ -1137,7 +1241,7 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
                 st.markdown(f"🌑 **تأثير الكسوف الشمسي وأورانوس:**<br>{f['special_notes']}", unsafe_allow_html=True)
 
         # ==========================================
-        # 6. التقرير النهائي HTML للطباعة والتحميل (محدث ومتكامل)
+        # 7. التقرير النهائي HTML للطباعة والتحميل (محدث ومتكامل)
         # ==========================================
         html_rulers_rows = ""
         html_rulers_details = ""
@@ -1163,6 +1267,25 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
             </div>
             """
 
+        html_general_aspects_rows = ""
+        html_general_aspects_details = ""
+        for ga in engine.general_aspects_data:
+            html_general_aspects_rows += f"""
+            <tr>
+                <td><b>{ga['body1']}</b></td>
+                <td><b>{ga['body2']}</b></td>
+                <td>{ga['aspect_name']}</td>
+                <td>{ga['orb']:.2f}°</td>
+                <td>البيت {ga['house1']} ({ga['sign1']})</td>
+                <td>البيت {ga['house2']} ({ga['sign2']})</td>
+            </tr>
+            """
+            html_general_aspects_details += f"""
+            <div class="ruler-detail-card" style="border-right-color: #8b5cf6;">
+                {ga['analysis']}
+            </div>
+            """
+
         html_stellar_rows = ""
         for sa in engine.stellar_aspects:
             html_stellar_rows += f"""
@@ -1176,7 +1299,6 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
             </tr>
             """
 
-        # 1. إعداد جزئية التفاصيل التشريحية والنفسية لكل الأجرام للتقرير
         html_placements_details = ""
         for p in engine.planets_data:
             analysis_txt = med_analyzer.analyze_placement(
@@ -1187,25 +1309,6 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
                 {analysis_txt}
             </div>
             """
-
-        # 2. إعداد جزئية الاتصالات والتفاعلات الفسيولوجية والتوترية للتقرير
-        html_aspects_details = ""
-        if engine.aspects_data:
-            for asp_item in engine.aspects_data:
-                asp_analysis = med_analyzer.analyze_aspect(
-                    asp_item["body1"], asp_item["body2"],
-                    asp_item["aspect_name"],
-                    house1=asp_item["house1"], house2=asp_item["house2"],
-                    is_body1_asteroid=asp_item["is_asteroid1"],
-                    is_body2_asteroid=asp_item["is_asteroid2"]
-                )
-                html_aspects_details += f"""
-                <div class="ruler-detail-card" style="border-right-color: #d97706;">
-                    {asp_analysis}
-                </div>
-                """
-        else:
-            html_aspects_details = "<p>لا توجد اتصالات فسيولوجية رئيسية ضمن نطاق الأورب المخصص.</p>"
 
         html_medical_section = f"""
         <div class="card" style="border-right-color: #e74c3c; background: #fff5f5;">
@@ -1238,7 +1341,7 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>التقرير الفلكي الطبي والنجمي الشامل - {name}</title>
+    <title>التقرير الفلكي الشامل - {name}</title>
     <style>
         body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 20px; line-height: 1.6; }}
         .container {{ max-width: 950px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }}
@@ -1256,19 +1359,36 @@ if submit and name and selected_city_name != "لا توجد بيانات مدن 
 </head>
 <body>
     <div class="container">
-        <h1>🌌 التقرير الفلكي الشامل (نجوم ثابتة - طبي - نفسي - قوى البيوت و تحليل طاقتها - توقعات لـ 5 سنوات)</h1>
+        <h1>🌌 التقرير الفلكي الشامل (اتصالات عامة - نجوم ثابتة - طبي - نفسي - قوى البيوت - توقعات لـ 5 سنوات)</h1>
         <div class="meta">
             <b>الاسم:</b> {name} | <b>الجنس:</b> {gender} | <b>تاريخ الميلاد:</b> {dob} ({tob}) | <b>الموقع:</b> {selected_country} - {selected_city_name} | <b>برج الطالع:</b> {asc_sign}
         </div>
 
-        <h2>🏥 أولاً: ملخص التحليل الفلكي الطبي والسيكوسوماتي</h2>
+        <h2>🔗 أولاً: تحليل الاتصالات الفلكية العامة (تربيع، تسديس، مقابلة، اقتران، تثليث) لشخصية صاحب الخريطة</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>الجرم الأول</th>
+                    <th>الجرم الثاني</th>
+                    <th>نوع الاتصال</th>
+                    <th>الفرق (Orb)</th>
+                    <th>موقع الجرم 1</th>
+                    <th>موقع الجرم 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {html_general_aspects_rows if html_general_aspects_rows else "<tr><td colspan='6'>لا توجد اتصالات ضمن نطاق الأورب.</td></tr>"}
+            </tbody>
+        </table>
+        
+        <h3>🔍 التفاصيل السيكولوجية والشخصية للاتصالات الفلكية العامة:</h3>
+        {html_general_aspects_details}
+
+        <h2>🏥 ثانياً: ملخص التحليل الفلكي الطبي والسيكوسوماتي</h2>
         {html_medical_section}
 
-        <h2>🔍 ثانياً: تفاصيل التحليل التشريحي والنفسي لجميع الأجرام في الخارطة</h2>
+        <h2>🔍 ثالثاً: تفاصيل التحليل التشريحي والنفسي لجميع الأجرام في الخارطة</h2>
         {html_placements_details}
-
-        <h2>🔗 ثالثاً: تحليل الاتصالات والتفاعلات الفسيولوجية والتوترية بين الأجرام</h2>
-        {html_aspects_details}
 
         <h2>🏛️ رابعاً: تقييم قوة حكام البيوت ومسارات الموارد وتوجّه الطاقة</h2>
         <table>
